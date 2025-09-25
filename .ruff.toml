@@ -1,0 +1,10 @@
+line-length = 110
+exclude = ["migrations", "templates", "docs", "__pycache__", "venv", ".env", ".git"]
+
+[lint]
+extend-select = ["I"]
+select = ["E", "F", "W"]
+ignore = ["E501"]
+
+[format]
+quote-style = "double"
