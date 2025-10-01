@@ -1,12 +1,15 @@
 import logging
 import logging.config
 
-from src.settings import env
+import sentry_sdk
+from sentry_sdk.integrations.logging import LoggingIntegration
+
+from src import settings
 
 CONFIG = {
     "version": 1,
     "formatters": {
-        "detailed": {"format": "%(asctime)s - %(module)s - %(levelname)s - L[%(lineno)d]: %(message)s"}
+        "detailed": {"format": "%(asctime)s - %(module)s - %(levelname)s - %(message)s"}
     },
     "handlers": {
         "console": {"class": "logging.StreamHandler", "level": "INFO", "formatter": "detailed"},
@@ -23,9 +26,15 @@ CONFIG = {
 
 def setup_logger():
     logging.config.dictConfig(CONFIG)
-    if env == "prod":
-        # integrate sentry
-        pass
+    if settings.env == "prod":
+        logging_integration = LoggingIntegration(level=logging.INFO, event_level=logging.ERROR)
+        sentry_sdk.init(
+            dsn=settings.SENTRY_DSN,
+            send_default_pii=False,
+            enable_logs=True,
+            environment=settings.env,
+            integrations=[logging_integration]
+        )
     return logging.getLogger("metal_rate")
 
 

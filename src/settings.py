@@ -13,17 +13,27 @@ USER_AGENTS = [
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 13_1) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.1 Safari/605.1.15",
 ]
 
-# Scrapping URL
+# Scrapping config
 LIVE_RATE_URL = os.getenv("LIVE_RATE_URL")
+SCRAPER = "live_rate"
 
-# Agentic credentials
-ALLOW_AGENT_CALL = os.getenv("MAKE_AGENT_CALL") == "True"
+# Agentic AI config
+ALLOW_AGENT_CALL = os.getenv("MAKE_AGENT_CALL", "False") == "True"
 AI_AGENT_API_KEY = os.getenv("AI_AGENT_API_KEY")
 AI_AGENT_MODEL = os.getenv("AI_AGENT_MODEL")
 
-# MongoDB credentials
+# MongoDB config
 URI = os.getenv("URI")
 DB = os.getenv("DB")
 
 # Environment
 env = os.getenv("ENV", "dev")
+
+# Whatsapp config
+WHAPI_URL = os.getenv("WHAPI_URL", "")
+WHAPI_TOKEN = os.getenv("WHAPI_TOKEN", "")
+WHAPI_GROUP_ID = os.getenv("WHAPI_GROUP_ID", "")
+SEND_WHATSAPP_NOTIFICATION = os.getenv("SEND_WHATSAPP_NOTIFICATION", "False") == "True"
+
+# Sentry Config
+SENTRY_DSN = os.getenv("SENTRY_DSN", '')

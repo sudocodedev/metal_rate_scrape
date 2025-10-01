@@ -31,3 +31,13 @@ def migrate_collection():
             db[name].create_indexes(indices)
         except Exception as e:
             print(e)
+
+
+def drop_collection_indexes(collection:str):
+    if collection not in COLLECTIONS:
+        raise LookupError(f"Invalid table provided - '{collection}'.")
+    try:
+        db = get_db(MongoDBClient)
+        db[collection].drop_indexes()
+    except Exception as e:
+        print(e)

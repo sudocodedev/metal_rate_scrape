@@ -32,7 +32,7 @@ VALIDATORS = {
                 {"properties": {"type": {"enum": ["silver"]}}},
             ],
             "properties": {
-                "date": {"bsonType": "date"},
+                "date": {"bsonType": "string"},
                 "price_per_g": {"bsonType": "double"},
                 "diff": {"bsonType": "double"},
                 "percent": {"bsonType": "double"},
@@ -46,15 +46,13 @@ VALIDATORS = {
     "insight": {
         "$jsonSchema": {
             "bsonType": "object",
-            "required": ["type", "status", "delivered_count", "user_count", "message"],
+            "required": ["type", "status", "message"],
             "properties": {
                 "type": {"enum": ["daily", "weekly", "monthly", "yearly"]},
                 "status": {"enum": ["success", "failure", "partial", "aborted"]},
-                "delivered_count": {"bsonType": "int", "minimum": 0},
-                "user_count": {"bsonType": "int", "minimum": 0},
-                "message": {"bsonType": "string", "minLength": 20},
+                "message": {"bsonType": "string"},
                 "sent_at": {"bsonType": "date"},
-                "reason": {"bsonType": "string", "maxLength": 512},
+                "reason": {"bsonType": "string"},
                 "created_at": {"bsonType": "date"},
                 "modified_at": {"bsonType": "date"},
                 "is_active": {"bsonType": "bool"},
@@ -64,12 +62,12 @@ VALIDATORS = {
     "job_tracker": {
         "$jsonSchema": {
             "bsonType": "object",
-            "required": ["scraped_at", "source", "status", "reason"],
+            "required": ["scraped_at", "source", "status"],
             "properties": {
-                "scraped_at": {"bsonType": "date"},
+                "scraped_at": {"bsonType": "string"},
                 "source": {"bsonType": "string"},
                 "status": {"enum": ["success", "failure", "partial", "aborted"]},
-                "reason": {"bsonType": "string", "maxLength": 512},
+                "reason": {"bsonType": "string"},
                 "created_at": {"bsonType": "date"},
                 "modified_at": {"bsonType": "date"},
                 "is_active": {"bsonType": "bool"},
@@ -87,10 +85,10 @@ INDICES = {
         IndexModel([("created_at", 1)]),
     ],
     "metal_rate": [
-        IndexModel([("date", 1), ("source", 1), ("type", 1)], unique=True),
-        IndexModel([("purity", 1)]),
+        IndexModel([("date", 1), ("source", 1), ("type", 1), ("purity", 1)], unique=True),
         IndexModel([("is_active", 1)]),
         IndexModel([("created_at", 1)]),
+        IndexModel([("date", -1)]),
     ],
     "insight": [
         IndexModel([("sent_at", 1)]),

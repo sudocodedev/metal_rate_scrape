@@ -1,7 +1,7 @@
 import locale
 import random
 from datetime import date, datetime, timedelta, timezone
-from typing import Optional
+from typing import Optional, Tuple
 
 from src.settings import USER_AGENTS
 
@@ -38,3 +38,15 @@ def format_currentcy(amount: float) -> str:
 def ist_now():
     IST = timezone(timedelta(hours=5, minutes=30))
     return datetime.now(IST).isoformat()
+
+def get_today_date():
+    return datetime.now().date().isoformat()
+
+def get_start_end_week_dates() -> Tuple[str, str]:
+    today = datetime.now(timezone.utc).date()
+    start_date = today - timedelta(days=today.weekday()) # mon
+    end_date = start_date + timedelta(days=6) # sun
+    return start_date.isoformat(), end_date.isoformat()
+
+def utc_now():
+    return datetime.now(timezone.utc)

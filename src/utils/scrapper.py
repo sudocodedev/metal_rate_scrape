@@ -34,9 +34,9 @@ class LiveRateScrapper:
             if gold_rate[0] != silver_rate[0]:
                 continue
 
-            gold_24k = Metal(date=gold_rate[0], type="gold", purity="24k", price_per_g=gold_rate[1])
-            gold_22k = Metal(date=gold_rate[0], type="gold", purity="22k", price_per_g=gold_rate[2])
-            silver = Metal(date=silver_rate[0], type="silver", purity=None, price_per_g=silver_rate[1])
+            gold_24k = Metal(date=gold_rate[0], type="gold", purity="24k", price_per_g=gold_rate[1], source=self.name)
+            gold_22k = Metal(date=gold_rate[0], type="gold", purity="22k", price_per_g=gold_rate[2], source=self.name)
+            silver = Metal(date=silver_rate[0], type="silver", purity=None, price_per_g=silver_rate[1], source=self.name)
             items.append({"rates": [gold_24k, gold_22k, silver]})
 
         # computing diff and percent

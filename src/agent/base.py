@@ -7,7 +7,7 @@ class InsightAgenticCall(Protocol):
     def daily_insight(self, data: dict) -> str:
         raise NotImplementedError
 
-    def weekly_insight(self, data: list) -> str:
+    def weekly_insight(self, data: dict) -> str:
         raise NotImplementedError
 
     def monthly_insight(self, data: list) -> str:

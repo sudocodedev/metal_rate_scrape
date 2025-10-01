@@ -1,6 +1,8 @@
 from enum import Enum
 from typing import Protocol
 
+from src.db import COLLECTIONS
+
 
 class SortOrder(Enum):
     ASC = 1
@@ -40,4 +42,6 @@ def get_db(client: IClient):
 
 
 def get_table(name: str, collection_class: ICollection):
+    if name not in COLLECTIONS:
+        raise Exception(f"'{name}' - invalid table name provided.")
     return collection_class(name)

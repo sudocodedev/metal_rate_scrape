@@ -11,6 +11,7 @@ class Metal(BaseModel):
     price_per_g: float
     diff: float = 0
     percent: float = 0
+    source: str
 
 
 class Item(BaseModel):
@@ -37,7 +38,8 @@ Format:
             "purity": "24k",
             "price_per_g": 144,
             "diff": 1,
-            "percent": 0.7
+            "percent": 0.7,
+            "source": "live_rate",
           },
           {
             "date": "2025-09-16",
@@ -45,14 +47,16 @@ Format:
             "purity": "22k",
             "price_per_g": 144,
             "diff": 1,
-            "percent": 0.7
+            "percent": 0.7,
+            "source": "live_rate",
           },
           {
             "date": "2025-09-16",
             "item": "silver",
             "price_per_g": 144,
             "diff": 1,
-            "percent": 0.7
+            "percent": 0.7,
+            "source": "live_rate",
           }
       ]
     },
@@ -64,7 +68,8 @@ Format:
             "purity": "24k",
             "price_per_g": 144,
             "diff": 1,
-            "percent": 0.7
+            "percent": 0.7,
+            "source": "live_rate",
           },
           {
             "date": "2025-09-15",
@@ -72,14 +77,16 @@ Format:
             "purity": "22k",
             "price_per_g": 144,
             "diff": 1,
-            "percent": 0.7
+            "percent": 0.7,
+            "source": "live_rate",
           },
           {
             "date": "2025-09-15",
             "item": "silver",
             "price_per_g": 144,
             "diff": 1,
-            "percent": 0.7
+            "percent": 0.7,
+            "source": "live_rate",
           }
       ]
     }
