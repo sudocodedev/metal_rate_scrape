@@ -42,7 +42,7 @@ def main():
         if not previous_rates_exist:
             metal_rate_collection.insert_many(documents=rates)
         else:
-            metal_rate_collection.insert_one(document=current_rate)
+            metal_rate_collection.insert_many(documents=current_rate)
 
 
         # Insight Generation & loading to 'insight' collection in DB
