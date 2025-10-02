@@ -48,17 +48,26 @@ class MongoCollection:
         return self.collection.insert_many(documents=documents).inserted_ids
 
 
-    def find_one(self, query: dict, columns: list=None, ignore_defaults:bool=False):
+    def find_one(self, query: dict, columns: list=None, sort: List[Tuple]=None, ignore_defaults:bool=False):
         projection = {col: 1 for col in columns} if columns else {}
-        if ignore_defaults:
+
+        # NOTE: to prevent inclusion on field in exclusion projection
+        if not projection and ignore_defaults:
             projection.update({"_id": 0, "created_at": 0, "modified_at": 0, "is_active": 0})
+
+        if sort:
+            sort_keys = [(field, 1 if direction == SortOrder.ASC else -1) for field, direction in sort]
+            return self.collection.find_one(query, sort=sort_keys, projection=projection)
+
         return self.collection.find_one(query, projection)
 
     def find_many(
             self, query: dict, sort: List[Tuple]=None, limit=None, skip=None, columns: list=None, ignore_defaults:bool=False
     ) -> list:
         projection = {col: 1 for col in columns} if columns else {}
-        if ignore_defaults:
+
+        # NOTE: to prevent inclusion on field in exclusion projection
+        if not projection and ignore_defaults:
             projection.update({"_id": 0, "created_at": 0, "modified_at": 0, "is_active": 0})
 
         cursor = self.collection.find(query, projection)

@@ -1,11 +1,12 @@
-name: Daily Scrape Job Trigger
+name: Daily Scrape Job Trigger 1
 
 on:
   schedule:
-    - cron: '10 5 * * *' # At 05:10 an UTC everyday
+    - cron: '10 5 * * *' # At 05:10 on everyday (UTC)
+  workflow_dispatch:
 
 jobs:
-  daily-scrape:
+  daily-scrape-1:
     runs-on: ubuntu-latest
     steps:
       - name: checkout repo content
@@ -22,7 +23,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: run daily script
+      - name: run daily script 1
         env:
           LIVE_RATE_URL: ${{ secrets.LIVE_RATE_URL }}
           AI_AGENT_API_KEY: ${{ secrets.AI_AGENT_API_KEY }}

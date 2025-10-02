@@ -12,6 +12,9 @@ class WhatsappNotification():
             logger.info("Whatsapp notification disabled.")
             return None
 
+        if not data:
+            raise ValueError("data can't be empty")
+
         url = settings.WHAPI_URL
         headers = {
             "accept": "application/json",
