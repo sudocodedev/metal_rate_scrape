@@ -23,6 +23,7 @@ def main():
     try:
         # Running scrapper
         scraped_data = run_scrapper(scrapper=LiveRateScrapper())
+        last_updated = scraped_data.get("last_updated", {})
 
         #Data validation
         items = scraped_data.get("items", [])
@@ -50,7 +51,7 @@ def main():
         if not daily_insight:
             raise ValueError(f"No daily insight generated for {current_date}")
 
-        insight_collection.insert_one({
+        insight_id = insight_collection.insert_one({
             "status": "success",
             "message": daily_insight,
             "type": "daily",
@@ -65,7 +66,10 @@ def main():
         job_tracker_collection.insert_one({
             "scraped_at": scraped_data.get("scraped_at", ist_now()),
             "source": scraped_data.get("source", "N/A"),
-            "status": "success"
+            "status": "success",
+            "insight": insight_id,
+            "gold_last_upd_tm": last_updated.get("gold"),
+            "silver_last_upd_tm": last_updated.get("silver"),
         })
         logger.info("✅ Daily execution completed.")
 
@@ -77,7 +81,9 @@ def main():
             "scraped_at": scraped_data.get("scraped_at", ist_now()),
             "source": scraped_data.get("source", "N/A"),
             "status": "failure",
-            "reason": f"{type(e).__name__}: {str(e)}"
+            "reason": f"{type(e).__name__}: {str(e)}",
+            "gold_last_upd_tm": scraped_data.get("last_updated", {}).get("gold"),
+            "silver_last_upd_tm": scraped_data.get("last_updated", {}).get("silver"),
         })
 
 

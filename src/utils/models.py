@@ -22,6 +22,7 @@ class MetalRate(BaseModel):
     scraped_at: datetime
     source: str
     items: List[Item] = []
+    last_updated: Optional[dict] = {}
 
 
 """
@@ -29,12 +30,16 @@ Format:
 {
   "scraped_at": "2025-09-16 12:08:30",
   "source": "live_rate",
+  "last_updated": {
+    "gold": "09:25:31 AM",
+    "silver": "09:25:31 AM"
+  }
   "items": [
     {
       "rates": [
           {
             "date": "2025-09-16",
-            "item": "gold",
+            "type": "gold",
             "purity": "24k",
             "price_per_g": 144,
             "diff": 1,
@@ -43,7 +48,7 @@ Format:
           },
           {
             "date": "2025-09-16",
-            "item": "gold",
+            "type": "gold",
             "purity": "22k",
             "price_per_g": 144,
             "diff": 1,
@@ -52,7 +57,7 @@ Format:
           },
           {
             "date": "2025-09-16",
-            "item": "silver",
+            "type": "silver",
             "price_per_g": 144,
             "diff": 1,
             "percent": 0.7,
@@ -64,7 +69,7 @@ Format:
       "rates": [
           {
             "date": "2025-09-15",
-            "item": "gold",
+            "type": "gold",
             "purity": "24k",
             "price_per_g": 144,
             "diff": 1,
@@ -73,7 +78,7 @@ Format:
           },
           {
             "date": "2025-09-15",
-            "item": "gold",
+            "type": "gold",
             "purity": "22k",
             "price_per_g": 144,
             "diff": 1,
@@ -82,7 +87,7 @@ Format:
           },
           {
             "date": "2025-09-15",
-            "item": "silver",
+            "type": "silver",
             "price_per_g": 144,
             "diff": 1,
             "percent": 0.7,

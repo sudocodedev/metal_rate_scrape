@@ -43,3 +43,9 @@ def get_start_end_week_dates() -> Tuple[str, str]:
 
 def utc_now():
     return datetime.now(timezone.utc)
+
+
+def start_end_of_today():
+    st_dt = datetime.now(timezone.utc).replace(hour=0, minute=0, second=0, microsecond=0)
+    end_dt = st_dt + timedelta(days=1)
+    return st_dt, end_dt

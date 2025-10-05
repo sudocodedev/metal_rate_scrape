@@ -1,12 +1,12 @@
-name: Daily Scrape Job Trigger 1
+name: Daily Scrape Job Trigger 2
 
 on:
   schedule:
-    - cron: '8 5 * * *' # At 05:05 on everyday (UTC)
+    - cron: '40 12 * * *' # At 12:40 on everyday (UTC)
   workflow_dispatch:
 
 jobs:
-  daily-scrape-1:
+  daily-scrape-2:
     runs-on: ubuntu-latest
     steps:
       - name: checkout repo content
@@ -23,7 +23,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: run daily script 1
+      - name: run daily script 2
         env:
           LIVE_RATE_URL: ${{ secrets.LIVE_RATE_URL }}
           AI_AGENT_API_KEY: ${{ secrets.AI_AGENT_API_KEY }}
@@ -37,4 +37,4 @@ jobs:
           WHAPI_GROUP_ID: ${{ secrets.WHAPI_GROUP_ID }}
           SEND_WHATSAPP_NOTIFICATION: ${{ secrets.SEND_WHATSAPP_NOTIFICATION }}
           SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
-        run: python -m src.scripts.daily
+        run: python -m src.scripts.daily1

@@ -355,5 +355,175 @@ PROMPTS = {
         - The date format in bullet 2 must match the month abbreviation style
         - If 'insight' field is empty string, proceed with normal analysis
         - If 'insight' field has content, extract previous week's trend and use for comparison
-   """
+    """,
+    "evening_update": """
+        You are an assistant that generates WhatsApp-friendly bilingual (English + modern Tamil) evening rate update alerts for Chennai gold/silver customers.
+
+        Input JSON data:
+        {}
+
+        Task:
+        1. Extract 'rates' array and 'mrng_insight' from JSON
+        2. Parse morning rates from 'mrng_insight' text to get morning prices
+        3. Extract evening rates from 'rates' array (these are the updated evening prices)
+        4. Calculate change: evening rate - morning rate for each metal
+        5. Generate a short, urgent evening update message
+        6. Add ONE simple action-oriented insight line
+        7. Rotate between different phrase variations to avoid repetition
+
+        IMPORTANT PARSING INSTRUCTIONS:
+        1. Extract MORNING rates from 'mrng_insight' text by finding patterns like "24K: ₹11,825/g"
+        2. Extract EVENING rates from 'rates' array - use 'price_per_g' field
+        3. Calculate intraday change: evening_price - morning_price
+        4. DO NOT use 'diff' and 'percent' from rates array - these are yesterday's comparison
+        5. Calculate fresh percentage: ((evening - morning) / morning) * 100
+
+        OUTPUT FORMAT EXAMPLE:
+
+        🔔 *Evening Rate Update*
+        🗓️ 4 Oct | 🕡 6:00 PM
+
+        *🟡 தங்கம் / Gold*
+        *24K:*
+        _காலை:_ ₹11,825
+        _மாலை:_ ₹11,945
+        ↑ +₹120 (+1.01%) 📈
+
+        *22K:*
+        _காலை:_ ₹10,840
+        _மாலை:_ ₹10,950
+        ↑ +₹110 (+1.01%) 📈
+
+        *⚪ வெள்ளி*
+        _காலை: ₹161_
+        _மாலை:_ ₹165
+        ↑ +₹4 (+2.48%) 📈
+
+        💡 காலையை விட மாலை கணிசமாக அதிகம் - momentum தொடர்கிறது
+
+        FORMATTING RULES:
+
+        1. DATE FORMAT:
+            - Extract from 'date' field in rates array
+            - Format as: DD MMM (e.g., 4 Oct, 15 Nov)
+            - Add time as "6:00 PM" (standard evening update time)
+
+        2. MORNING PRICE EXTRACTION:
+            - Parse 'mrng_insight' text to find morning prices
+            - Look for patterns: "24K: ₹11,825/g", "22K: ₹10,840/g", "₹161/g" (for silver)
+            - Extract the price value after ₹ symbol and before /g
+
+        3. EVENING PRICE EXTRACTION:
+            - From 'rates' array, find entry where type='gold' and purity='24k'
+            - Use 'price_per_g' value as evening price
+            - Repeat for 22k and silver
+
+        4. PRICE DISPLAY:
+            - Use comma separator for thousands: ₹11,825 (NOT ₹11825)
+            - Format: காலை: ₹[morning] → மாலை: ₹[evening]
+            - Always show change amount AND percentage
+            - Round to whole numbers (no decimals)
+            - Round percentage to 2 decimal places
+
+        5. CHANGE CALCULATION:
+            - Amount: evening_price - morning_price (NOT the 'diff' from JSON)
+            - Percentage: ((evening - morning) / morning) * 100
+            - Always include sign: + or -
+
+        6. TREND ICONS:
+            - If change > 0: Use ↑ and 📈
+            - If change < 0: Use ↓ and 📉
+            - If change = 0: Use ⇔ and ↔️
+
+        7. BOLD FORMATTING:
+            - Main title: *Evening Rate Update*
+            - Section headers: *🟡 தங்கம் 24K*, *🟡 தங்கம் 22K*, *⚪ வெள்ளி*
+
+        ONE-LINER INSIGHT RULES:
+
+        Generate ONE simple action-oriented line based on the scenario. Rotate between variations to avoid repetition.
+
+        For ALL METALS INCREASE (gold_24k, gold_22k, silver all positive):
+
+        If gold_24k change >= 50 (Big Increase):
+        Rotate between these variations:
+        - "இன்று நல்ல உயர்வு - தொடர்ந்து உயரலாம், விரைவில் வாங்கவும்"
+        - "மாலை கணிசமாக அதிகம் - நாளை இன்னும் உயரும் வாய்ப்பு"
+        - "காலையை விட ₹[amount] அதிகம் - momentum தொடர்கிறது"
+        - "பெரிய உயர்வு - சீக்கிரம் முடிவு எடுப்பது நல்லது"
+        - "இன்று கணிசமான மாற்றம் - நாளை மேலும் உயரலாம்"
+
+        If gold_24k change 20-49 (Moderate Increase):
+        Rotate between:
+        - "காலையை விட மாலை அதிகம் - நாளை மேலும் உயரலாம்"
+        - "மாலை விலை சற்று கூடுதல் - தொடர் உயர்வு சாத்தியம்"
+        - "இன்று சிறிய உயர்வு - நிலையான போக்கு தொடர்கிறது"
+        - "காலை விலை தவறவிட்டவர்களுக்கு மாலை அதிகம்"
+        - "மாலை நேரத்தில் உயர்ந்துள்ளது - நாளை trend பார்க்கலாம்"
+
+        If gold_24k change < 20 (Small Increase):
+        Rotate between:
+        - "மிக சிறிய உயர்வு - நிலையான சந்தை"
+        - "பெரிய வித்தியாசம் இல்லை - அமைதியான சந்தை"
+        - "காலை மாலை கிட்டத்தட்ட சமம்"
+        - "சிறிய மாற்றம் மட்டுமே - stable நிலை"
+        - "நிலையான விலை - அவசரம் இல்லை"
+
+        For ANY METAL DECREASE (any of gold_24k, gold_22k, silver negative):
+        Rotate between:
+        - "மாலை விலை சற்று குறைவு - வாங்க நல்ல நேரம்"
+        - "காலையை விட மாலை குறைவு - இன்று வாங்கலாம்"
+        - "இன்று விலை சிறிது இறங்கியது - நல்ல வாய்ப்பு"
+        - "மாலை நேரத்தில் குறைந்துள்ளது - வாங்குவோருக்கு சாதகம்"
+        - "விலை correction - இப்போது வாங்குவது நல்லது"
+        - "காலையை விட ₹[amount] குறைவு - நல்ல டைமிங்"
+        - "இன்று குறைவு - நாளை மீண்டும் உயரும் முன் வாங்கலாம்"
+
+        For MIXED TREND (some up, some down):
+        Rotate between:
+        - "சந்தையில் ஏற்ற இறக்கம் - காலை விலை நல்லதாக இருந்தது"
+        - "இன்று uneven trend - stable ஆன பின் வாங்கலாம்"
+        - "விலைகள் மாறுபட்ட போக்கு - நாளை பார்க்கலாம்"
+        - "சில உயர்வு, சில இறக்கம் - நிலையற்ற சந்தை"
+        - "Mixed signals - நாளை trend clear ஆகும்"
+
+        For NO CHANGE (all changes = 0):
+        Rotate between:
+        - "மாலையும் அதே விலை - stable சந்தை"
+        - "காலை மாலை மாற்றம் இல்லை - நிலையான நிலை"
+        - "பெரிய மாற்றம் இல்லை - அமைதியான நாள்"
+        - "விலை அப்படியே - எப்போதும் வாங்கலாம்"
+        - "இன்று stable - நாளைக்கும் இதே போல இருக்கலாம்"
+
+        For VERY SMALL CHANGES (all changes < 10):
+        Rotate between:
+        - "மிக சிறிய மாற்றம் - கிட்டத்தட்ட stable"
+        - "பெரிய வித்தியாசம் இல்லை - அமைதியான சந்தை"
+        - "negligible change - நிலையான நிலை"
+        - "காலை மாலை கிட்டத்தட்ட சமம் - stable day"
+        - "minimal movement - அவசரம் தேவையில்லை"
+
+        Important:
+        - Randomly select ONE variation from the appropriate category
+        - Never use the same phrase consecutively if possible
+        - Keep tone informative but not overly urgent
+        - Replace [amount] with actual rupee difference when mentioned in the phrase
+        - The insight should be friendly suggestion, not hard sell
+
+        MONTH ABBREVIATIONS:
+        Jan, Feb, Mar, Apr, May, Jun, Jul, Aug, Sep, Oct, Nov, Dec
+
+        CRITICAL OUTPUT REQUIREMENTS:
+        - Output plain text only - NO Python code, NO JSON, NO markdown code blocks
+        - Use modern simple Tamil
+        - Keep message ultra-short (must fit one phone screen without scrolling)
+        - Use proper WhatsApp formatting: *bold*
+        - Always use comma separators for prices above 1000
+        - ONE insight line only - no bullet points, no multiple lines
+        - Focus on urgency and action, but not overly pushy
+        - The insight should be different from morning insight tone
+        - Message should be concise and scannable in 5 seconds
+        - CRITICAL: Calculate intraday change (evening - morning), NOT yesterday's change
+        - CRITICAL: Parse morning rates from 'mrng_insight' text correctly
+    """
 }

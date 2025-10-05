@@ -48,7 +48,7 @@ VALIDATORS = {
             "bsonType": "object",
             "required": ["type", "status", "message"],
             "properties": {
-                "type": {"enum": ["daily", "weekly", "monthly", "yearly"]},
+                "type": {"enum": ["daily", "weekly", "monthly", "yearly", "evening"]},
                 "status": {"enum": ["success", "failure", "partial", "aborted"]},
                 "message": {"bsonType": "string"},
                 "sent_at": {"bsonType": "date"},
@@ -71,6 +71,12 @@ VALIDATORS = {
                 "created_at": {"bsonType": "date"},
                 "modified_at": {"bsonType": "date"},
                 "is_active": {"bsonType": "bool"},
+                "gold_last_upd_tm": {"bsonType": "string"},
+                "silver_last_upd_tm": {"bsonType": "string"},
+                "insight": {
+                    "bsonType": "objectId",
+                    "description": "Foreign key reference to insight collection"
+                }
             },
         }
     },

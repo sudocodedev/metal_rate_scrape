@@ -19,7 +19,7 @@ class GeminiInsightAgenticCall:
         if not self.api_key or not self.model:
             raise ValueError(f"Missing required values for {self.name}: 'api_key' or 'model'")
 
-    def send(self, prompt: str):
+    def send(self, prompt: str, type: str):
         """
         - Send prompt to Gemini AI and return response
         - Returns: Response text or None if failed/disabled
@@ -37,7 +37,7 @@ class GeminiInsightAgenticCall:
                     thinking_config=types.ThinkingConfig(thinking_budget=0)
                 ),
             )
-            logger.info(f"{self.name} - Daily insight generated successfully.")
+            logger.info(f"{self.name} - {type} insight generated successfully.")
             return response.text
         except Exception as e:
             logger.error(f"{self.name} - Failed to get response from Gemini - {type(e).__name__}: {str(e)}")
@@ -59,9 +59,24 @@ class GeminiInsightAgenticCall:
                 raise ValueError(f"{self.name} - Template not found.")
 
             context = template.format(json.dumps(feed, default=str))
-            return self.send(prompt=context)
+            return self.send(prompt=context, type="daily")
         except Exception as e:
             logger.error(f"{self.name} - Failed to generate daily insight - {type(e).__name__}: {str(e)}")
+
+    def evening_insight(self, data:dict):
+        """Generate evening insight if there is a change in metal price compared to morning."""
+        try:
+            if not data:
+                raise ValueError("data can't be empty")
+
+            template = self.fetch_prompt(insight="evening_update")
+            if not template:
+                raise ValueError(f"{self.name} - Template not found.")
+
+            context = template.format(json.dumps(data))
+            return self.send(prompt=context, type="evening")
+        except Exception as e:
+            logger.error(f"{self.name} - Failed to generate evening insight - {type(e).__name__}: {str(e)}")
 
     def weekly_insight(self, data: dict) -> str:
         """Generate weekly market insight"""
@@ -74,7 +89,7 @@ class GeminiInsightAgenticCall:
                 raise ValueError(f"{self.name} - Template not found.")
 
             context = template.format(json.dumps(data))
-            return self.send(prompt=context)
+            return self.send(prompt=context, type="weekly")
         except Exception as e:
             logger.error(f"{self.name} - Failed to generate weekly insight - {type(e).__name__}: {str(e)}")
 

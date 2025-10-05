@@ -5,7 +5,7 @@ from bs4 import BeautifulSoup as bs
 
 from src.helpers import compute_percent, ist_now, parse_date, parse_float, user_agent
 from src.settings import LIVE_RATE_URL
-from src.utils import Metal, MetalRate
+from src.utils import Metal, MetalRate, logger
 
 
 class LiveRateScrapper:
@@ -48,7 +48,9 @@ class LiveRateScrapper:
         if items:
             items.pop()
 
-        return MetalRate(scraped_at=ist_now(), source=self.name, items=items).model_dump(mode="json")
+        timings = self.fetch_timings(content)
+
+        return MetalRate(scraped_at=ist_now(), source=self.name, items=items, last_updated=timings).model_dump(mode="json")
 
     def parse_table(self, content, selector: str, parse_fn) -> list:
         results = []
@@ -56,8 +58,7 @@ class LiveRateScrapper:
             try:
                 results.append(parse_fn(item))
             except Exception as e:
-                print(f"Exception during gold parsing - {type(e).__name__}: {str(e)}")
-                continue
+                logger.error(f"Exception during gold parsing - {type(e).__name__}: {str(e)}")
         return results
 
     def parse_gold(self, item):
@@ -73,3 +74,23 @@ class LiveRateScrapper:
         date = parse_date(date_str)
         rate_1g, _ = map(parse_float, rates_str)
         return [date, rate_1g]
+
+
+    def fetch_timings(self, content) -> dict:
+        timings = {}
+        PREFIX = "Last Update Time: "
+        selectors = {
+            "gold": "div.col-lg-6.col-md-6.col-xs-12.cgr-usection h5",
+            "silver": "div.col-lg-6.col-md-6.col-xs-12.csr-usection h5"
+        }
+
+        for metal, selector in selectors.items():
+            element = content.select_one(selector)
+            if not element:
+                continue
+            text = element.get_text(strip=True)
+            if text.startswith(PREFIX):
+                timings[metal] = text.replace(PREFIX, "").strip()
+            else:
+                timings[metal] = None
+        return timings

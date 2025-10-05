@@ -2,7 +2,7 @@ name: Weekly Job Trigger
 
 on:
   schedule:
-    - cron: '15 15 * * 0' # At 15:15 on everyday sunday (UTC)
+    - cron: '0 15 * * 0' # At 15:05 on everyday sunday (UTC)
   workflow_dispatch:
 
 jobs:

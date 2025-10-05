@@ -26,6 +26,7 @@ def get_insight(type: str, agent: InsightAgenticCall, data: Union[list, dict]):
         "weekly": agent.weekly_insight,
         "monthly": agent.monthly_insight,
         "yearly": agent.yearly_insight,
+        "evening": agent.evening_insight
     }
     if type not in strategies:
         raise ValueError(f"Unsupported insight type provided: {type}")
