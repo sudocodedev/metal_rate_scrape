@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 
 from src.agent import GeminiInsightAgenticCall, get_insight
 from src.db import MongoCollection, get_table
@@ -38,7 +38,9 @@ def main():
         # Loading rates in 'metal_rate' collection in DB based on data availability
         current_rate = items[0]["rates"]
         current_date = get_today_date()
-        previous_rates_exist = metal_rate_collection.find_many(query={"date": {"$lt": current_date}}, ignore_defaults=True)
+        previous_rates_exist = metal_rate_collection.find_many(
+            query={"date": {"$lt": current_date, "$gt": (datetime.now().date() - timedelta(days=9)).isoformat()}},
+            ignore_defaults=True)
 
         if not previous_rates_exist:
             metal_rate_collection.insert_many(documents=rates)
