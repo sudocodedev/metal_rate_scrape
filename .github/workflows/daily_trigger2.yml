@@ -2,7 +2,7 @@ name: Daily Scrape Job Trigger 2
 
 on:
   schedule:
-    - cron: '40 12 * * *' # At 12:40 on everyday (UTC)
+    - cron: '35 12 * * *' # At 12:35 on everyday (UTC)
   workflow_dispatch:
 
 jobs:
